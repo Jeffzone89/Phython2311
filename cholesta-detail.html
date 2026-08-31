@@ -6,290 +6,300 @@
 <title>콜레스타 상세페이지</title>
 <style>
   :root{
-    --wine:#7b1b2c;
-    --wine-deep:#5e1421;
-    --wine-soft:#f6eef0;
-    --ink:#232323;
-    --ink-mid:#4a4a4a;
-    --ink-soft:#7d7d7d;
-    --line:#e7e1e2;
-    --line-strong:#c9bcbf;
-    --paper:#ffffff;
-    --ground:#f4f1f0;
+    /* 색상 토큰 — 이 값만 바꾸면 전체 톤이 바뀝니다 */
+    --green:#1f4438;        /* 메인 딥그린 */
+    --green-mid:#2f6b55;    /* 보조 그린 */
+    --green-pale:#eaf0ec;   /* 연한 그린 배경 */
+    --gold:#b08d57;         /* 포인트 골드 */
+    --ivory:#f7f4ee;        /* 배경 아이보리 */
+    --paper:#fffdf9;        /* 본문 지면 */
+    --ink:#23241f;
+    --ink-mid:#55574f;
+    --ink-soft:#8b8c83;
+    --line:#e4ded2;
+    --line-strong:#cdc5b4;
   }
   *{box-sizing:border-box;}
   body{
     margin:0;
-    background:var(--ground);
+    background:var(--ivory);
     color:var(--ink);
     font-family:"Pretendard","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;
     font-size:15px;
-    line-height:1.65;
+    line-height:1.7;
     -webkit-text-size-adjust:100%;
   }
-  .page{
-    max-width:860px;
-    margin:0 auto;
+  .page{max-width:840px;margin:0 auto;background:var(--paper);}
+
+  /* ── 헤더 : 아이보리 배경 + 중앙 정렬 ── */
+  .head{
+    text-align:center;
+    padding:60px 36px 0;
     background:var(--paper);
   }
-
-  /* ── 헤더 ─────────────────────────────── */
-  .hero{
-    background:var(--wine);
-    color:#fff;
-    padding:44px 36px 40px;
-  }
-  .hero .kicker{
-    display:inline-block;
-    border:1px solid rgba(255,255,255,.55);
-    border-radius:999px;
-    padding:4px 14px;
-    font-size:12px;
-    letter-spacing:.12em;
-  }
-  .hero h1{
-    margin:18px 0 10px;
-    font-size:40px;
-    line-height:1.2;
-    letter-spacing:-.02em;
-    font-weight:800;
-  }
-  .hero .ingredients{
-    margin:0;
-    font-size:15px;
-    color:rgba(255,255,255,.86);
-    letter-spacing:.01em;
-  }
-  .hero .dose{
-    margin-top:26px;
-    padding-top:20px;
-    border-top:1px solid rgba(255,255,255,.28);
-    display:flex;
-    flex-wrap:wrap;
-    gap:28px;
-  }
-  .hero .dose div{min-width:120px;}
-  .hero .dose dt{
-    font-size:12px;
-    color:rgba(255,255,255,.7);
-    letter-spacing:.08em;
-    margin-bottom:4px;
-  }
-  .hero .dose dd{
-    margin:0;
-    font-size:17px;
+  .head .eyebrow{
+    font-size:11px;
+    letter-spacing:.32em;
+    color:var(--gold);
     font-weight:700;
+    text-transform:uppercase;
   }
-
-  /* ── 섹션 공통 ────────────────────────── */
-  section{padding:46px 36px;}
-  section + section{border-top:1px solid var(--line);}
-  .sec-head{
-    display:flex;
-    align-items:baseline;
-    gap:12px;
-    margin-bottom:26px;
-  }
-  .sec-head .no{
-    font-size:12px;
-    font-weight:700;
-    color:var(--wine);
-    letter-spacing:.14em;
-  }
-  .sec-head h2{
-    margin:0;
-    font-size:21px;
+  .head h1{
+    margin:16px 0 0;
+    font-size:46px;
     font-weight:800;
-    letter-spacing:-.01em;
+    letter-spacing:-.03em;
+    color:var(--green);
+    line-height:1.15;
   }
-  .sec-head .line{
-    flex:1;
-    height:1px;
-    background:var(--line);
+  .head .rule{
+    width:40px;
+    height:2px;
+    background:var(--gold);
+    margin:22px auto;
   }
-
-  /* ── 기능정보 카드 ────────────────────── */
-  .func-list{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:12px;
-  }
-  .func{
-    border:1px solid var(--line);
-    border-left:3px solid var(--wine);
-    border-radius:4px;
-    padding:18px 20px;
-    background:#fdfcfc;
-  }
-  .func .name{
-    display:block;
-    font-size:15px;
-    font-weight:800;
-    color:var(--wine-deep);
-    margin-bottom:6px;
-  }
-  .func .desc{
+  .head .ingredients{
     margin:0;
     font-size:14px;
     color:var(--ink-mid);
-    line-height:1.6;
+    letter-spacing:.02em;
+    word-break:keep-all;
   }
-  .func.wide{grid-column:1 / -1;}
-
-  /* ── 영양성분 표 ──────────────────────── */
-  .table-wrap{overflow-x:auto;}
-  .nutri-bar{
-    background:var(--wine);
-    color:#fff;
-    font-weight:700;
-    font-size:15px;
-    padding:11px 18px;
-    border-radius:3px 3px 0 0;
+  /* 스펙 스트립 */
+  .strip{
+    display:flex;
+    margin:40px 36px 0;
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
   }
-  table{
-    width:100%;
-    border-collapse:collapse;
-    font-size:14px;
+  .strip div{
+    flex:1;
+    text-align:center;
+    padding:20px 8px;
   }
-  thead th{
-    font-weight:600;
+  .strip div + div{border-left:1px solid var(--line);}
+  .strip dt{
+    font-size:11px;
+    letter-spacing:.14em;
     color:var(--ink-soft);
+    margin-bottom:6px;
+  }
+  .strip dd{
+    margin:0;
+    font-size:16px;
+    font-weight:700;
+    color:var(--green);
+  }
+
+  /* ── 섹션 공통 ── */
+  section{padding:56px 36px;}
+  .sec-title{
+    text-align:center;
+    margin:0 0 34px;
+  }
+  .sec-title .en{
+    display:block;
+    font-size:10.5px;
+    letter-spacing:.3em;
+    color:var(--gold);
+    font-weight:700;
+    margin-bottom:8px;
+  }
+  .sec-title .ko{
+    font-size:22px;
+    font-weight:800;
+    color:var(--green);
+    letter-spacing:-.01em;
+  }
+
+  /* ── 01 기능정보 : 번호 매긴 세로 리스트 ── */
+  .func{
+    display:flex;
+    gap:20px;
+    padding:20px 0;
+    border-bottom:1px dashed var(--line);
+    align-items:flex-start;
+  }
+  .func:first-of-type{border-top:1px dashed var(--line);}
+  .func .idx{
+    flex:none;
+    width:34px;
     font-size:13px;
+    font-weight:800;
+    color:var(--gold);
+    letter-spacing:.04em;
+    padding-top:3px;
+  }
+  .func .body{flex:1;}
+  .func .name{
+    display:block;
+    font-size:16px;
+    font-weight:800;
+    color:var(--green);
+    margin-bottom:2px;
+  }
+  .func .desc{
+    margin:0;
+    font-size:14.5px;
+    color:var(--ink-mid);
+    word-break:keep-all;
+  }
+
+  /* ── 02 영양성분 : 점선 리더 방식 ── */
+  .dose-pill{
+    display:block;
+    width:fit-content;
+    margin:0 auto 26px;
+    background:var(--green);
+    color:#fff;
+    font-size:14px;
+    font-weight:700;
+    letter-spacing:.02em;
+    padding:9px 24px;
+    border-radius:999px;
+  }
+  .table-wrap{overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;font-size:14.5px;}
+  thead th{
+    font-size:11.5px;
+    font-weight:700;
+    letter-spacing:.08em;
+    color:var(--ink-soft);
     text-align:left;
-    padding:11px 18px;
-    border-bottom:1px solid var(--line-strong);
-    background:#faf7f7;
+    padding:0 0 10px;
+    border-bottom:2px solid var(--green);
   }
   thead th.num,tbody td.num{text-align:right;}
+  thead th.pct,tbody td.pct{width:130px;}
   tbody th{
     text-align:left;
-    font-weight:700;
-    padding:11px 18px;
+    font-weight:600;
+    color:var(--ink);
+    padding:12px 0;
     border-bottom:1px solid var(--line);
     white-space:nowrap;
   }
   tbody td{
-    padding:11px 18px;
+    padding:12px 0;
     border-bottom:1px solid var(--line);
     color:var(--ink-mid);
     font-variant-numeric:tabular-nums;
   }
-  tbody td.amount{color:var(--ink);font-weight:600;}
-  tbody tr.split th,tbody tr.split td{border-top:2px solid var(--line-strong);}
-  tbody tr:last-child th,tbody tr:last-child td{border-bottom:1px solid var(--line-strong);}
+  tbody td.amount{color:var(--green);font-weight:700;}
+  tbody tr.split th,tbody tr.split td{
+    border-top:1px solid var(--line-strong);
+    padding-top:16px;
+  }
+  tbody tr.split th::after{
+    content:"";
+  }
   .table-note{
-    margin:12px 0 0;
+    margin:14px 0 0;
     text-align:right;
-    font-size:12.5px;
+    font-size:12px;
     color:var(--ink-soft);
   }
 
-  /* ── 원료명 ───────────────────────────── */
+  /* ── 03 원료명 : 풀블리드 딥그린 밴드 ── */
   .raw{
-    background:var(--wine-soft);
-    border-radius:4px;
-    padding:22px 24px;
+    background:var(--green);
+    color:#fff;
+    padding:52px 36px;
   }
-  .raw h3{
-    margin:0 0 10px;
-    font-size:14px;
-    font-weight:800;
-    color:var(--wine-deep);
-    letter-spacing:.02em;
-  }
+  .raw .sec-title .en{color:rgba(255,255,255,.55);}
+  .raw .sec-title .ko{color:#fff;}
   .raw p{
     margin:0;
-    font-size:14px;
-    color:var(--ink-mid);
-    line-height:1.75;
+    max-width:640px;
+    margin-inline:auto;
+    font-size:14.5px;
+    line-height:1.9;
+    color:rgba(255,255,255,.82);
+    text-align:center;
     word-break:keep-all;
   }
-  .raw b{color:var(--ink);font-weight:700;}
+  .raw b{color:var(--gold);font-weight:700;}
 
-  /* ── 제품정보 ─────────────────────────── */
-  .info-grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:1px;
-    background:var(--line);
-    border:1px solid var(--line);
-    border-radius:4px;
-    overflow:hidden;
-  }
+  /* ── 04 제품정보 : 라벨 좌측 고정 행 ── */
   .info{
-    background:#fff;
-    padding:18px 20px;
+    border-top:1px solid var(--line-strong);
   }
-  .info.wide{grid-column:1 / -1;}
+  .info .row{
+    display:flex;
+    gap:24px;
+    padding:16px 0;
+    border-bottom:1px solid var(--line);
+  }
   .info dt{
-    font-size:12px;
+    flex:none;
+    width:132px;
+    font-size:13px;
     font-weight:700;
-    color:var(--wine);
-    letter-spacing:.06em;
-    margin-bottom:6px;
+    color:var(--green-mid);
+    letter-spacing:.02em;
+    padding-top:1px;
   }
   .info dd{
     margin:0;
+    flex:1;
     font-size:14.5px;
     color:var(--ink);
-    line-height:1.6;
     word-break:keep-all;
   }
   .info dd .sub{
     display:block;
-    margin-top:3px;
+    margin-top:2px;
     font-size:13.5px;
     color:var(--ink-soft);
   }
   .info dd .tel{
-    font-size:19px;
+    font-size:20px;
     font-weight:800;
+    color:var(--green);
     letter-spacing:.02em;
   }
 
-  /* ── 안내사항 ─────────────────────────── */
+  /* ── 안내사항 ── */
   .notice{
-    background:#faf8f8;
-    padding:34px 36px 44px;
-    border-top:1px solid var(--line);
+    background:var(--green-pale);
+    padding:36px 36px 48px;
   }
   .notice h3{
-    margin:0 0 14px;
-    font-size:13px;
+    margin:0 0 16px;
+    font-size:11px;
     font-weight:800;
-    color:var(--ink-soft);
-    letter-spacing:.1em;
+    letter-spacing:.24em;
+    color:var(--green-mid);
+    text-align:center;
   }
-  .notice ul{
-    margin:0;
-    padding:0;
-    list-style:none;
-  }
+  .notice ul{margin:0;padding:0;list-style:none;}
   .notice li{
     position:relative;
     padding-left:16px;
-    margin-bottom:8px;
+    margin-bottom:9px;
     font-size:12.5px;
-    line-height:1.7;
-    color:var(--ink-soft);
+    line-height:1.75;
+    color:var(--ink-mid);
     word-break:keep-all;
   }
-  .notice li::before{
-    content:"※";
-    position:absolute;
-    left:0;
-    top:0;
-  }
+  .notice li::before{content:"※";position:absolute;left:0;top:0;color:var(--ink-soft);}
   .notice li:last-child{margin-bottom:0;}
 
   @media (max-width:640px){
-    .hero{padding:34px 20px 30px;}
-    .hero h1{font-size:31px;}
-    section{padding:34px 20px;}
-    .func-list{grid-template-columns:1fr;}
-    .info-grid{grid-template-columns:1fr;}
-    .notice{padding:28px 20px 36px;}
-    thead th,tbody th,tbody td{padding:10px 12px;}
+    .head{padding:44px 20px 0;}
+    .head h1{font-size:34px;}
+    .strip{margin:32px 20px 0;flex-wrap:wrap;}
+    .strip div{flex:1 1 100%;padding:14px 8px;}
+    .strip div + div{border-left:0;border-top:1px solid var(--line);}
+    section{padding:40px 20px;}
+    .raw{padding:40px 20px;}
+    .raw p{text-align:left;}
+    .notice{padding:30px 20px 40px;}
+    .func{gap:12px;}
+    .func .idx{width:26px;}
+    .info .row{flex-direction:column;gap:4px;}
+    .info dt{width:auto;}
+    thead th.pct,tbody td.pct{width:88px;}
   }
 </style>
 </head>
@@ -297,51 +307,56 @@
 <div class="page">
 
   <!-- 헤더 -->
-  <header class="hero">
-    <span class="kicker">건강기능식품</span>
+  <header class="head">
+    <span class="eyebrow">Health Functional Food</span>
     <h1>콜레스타</h1>
+    <div class="rule"></div>
     <p class="ingredients">밀크씨슬 추출물 · 홍국 · 바나바잎 추출물 · 코엔자임Q10 · 비타민D</p>
-    <dl class="dose">
-      <div>
-        <dt>1일 섭취량</dt>
-        <dd>1정 (900 mg)</dd>
-      </div>
-      <div>
-        <dt>섭취 횟수</dt>
-        <dd>1일 1회</dd>
-      </div>
-      <div>
-        <dt>섭취 방법</dt>
-        <dd>충분한 물과 함께</dd>
-      </div>
+    <dl class="strip">
+      <div><dt>1일 섭취량</dt><dd>1정 (900 mg)</dd></div>
+      <div><dt>섭취 횟수</dt><dd>1일 1회</dd></div>
+      <div><dt>섭취 방법</dt><dd>충분한 물과 함께</dd></div>
     </dl>
   </header>
 
   <!-- 01 영양 · 기능정보 -->
   <section>
-    <div class="sec-head">
-      <span class="no">01</span>
-      <h2>영양 · 기능정보</h2>
-      <span class="line"></span>
+    <div class="sec-title">
+      <span class="en">Functional Information</span>
+      <span class="ko">영양 · 기능정보</span>
     </div>
-    <div class="func-list">
-      <div class="func">
+
+    <div class="func">
+      <span class="idx">01</span>
+      <div class="body">
         <span class="name">밀크씨슬 추출물</span>
         <p class="desc">간 건강에 도움을 줄 수 있음</p>
       </div>
-      <div class="func">
+    </div>
+    <div class="func">
+      <span class="idx">02</span>
+      <div class="body">
         <span class="name">홍국</span>
         <p class="desc">혈중 콜레스테롤 개선에 도움을 줄 수 있음</p>
       </div>
-      <div class="func">
+    </div>
+    <div class="func">
+      <span class="idx">03</span>
+      <div class="body">
         <span class="name">바나바잎 추출물</span>
         <p class="desc">식후 혈당상승 억제에 도움을 줄 수 있음</p>
       </div>
-      <div class="func">
+    </div>
+    <div class="func">
+      <span class="idx">04</span>
+      <div class="body">
         <span class="name">코엔자임Q10</span>
         <p class="desc">항산화 • 높은 혈압 감소에 도움을 줄 수 있음</p>
       </div>
-      <div class="func wide">
+    </div>
+    <div class="func">
+      <span class="idx">05</span>
+      <div class="body">
         <span class="name">비타민D</span>
         <p class="desc">칼슘과 인이 흡수되고 이용되는데 필요, 뼈의 형성과 유지에 필요, 골다공증발생 위험 감소에 도움을 줌</p>
       </div>
@@ -350,32 +365,31 @@
 
   <!-- 02 영양성분 -->
   <section>
-    <div class="sec-head">
-      <span class="no">02</span>
-      <h2>영양성분</h2>
-      <span class="line"></span>
+    <div class="sec-title">
+      <span class="en">Nutrition Facts</span>
+      <span class="ko">영양성분</span>
     </div>
-    <div class="nutri-bar">1일 섭취량 : 1정(900 mg)</div>
+    <span class="dose-pill">1일 섭취량 : 1정(900 mg)</span>
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
             <th scope="col">1일 섭취량 당</th>
             <th scope="col" class="num">함량</th>
-            <th scope="col" class="num">%영양성분기준치</th>
+            <th scope="col" class="num pct">%영양성분기준치</th>
           </tr>
         </thead>
         <tbody>
-          <tr><th scope="row">열량</th><td class="num amount">0 kcal</td><td class="num"></td></tr>
-          <tr><th scope="row">탄수화물</th><td class="num amount">0 g</td><td class="num">0 %</td></tr>
-          <tr><th scope="row">단백질</th><td class="num amount">0 g</td><td class="num">0 %</td></tr>
-          <tr><th scope="row">지방</th><td class="num amount">0 g</td><td class="num">0 %</td></tr>
-          <tr><th scope="row">나트륨</th><td class="num amount">0 mg</td><td class="num">0 %</td></tr>
-          <tr class="split"><th scope="row">실리마린</th><td class="num amount">130 mg</td><td class="num"></td></tr>
-          <tr><th scope="row">총 모나콜린 K</th><td class="num amount">8 mg</td><td class="num"></td></tr>
-          <tr><th scope="row">코로솔산</th><td class="num amount">1.3 mg</td><td class="num"></td></tr>
-          <tr><th scope="row">코엔자임Q10</th><td class="num amount">100 mg</td><td class="num"></td></tr>
-          <tr><th scope="row">비타민D</th><td class="num amount">25 ㎍</td><td class="num">250 %</td></tr>
+          <tr><th scope="row">열량</th><td class="num amount">0 kcal</td><td class="num pct"></td></tr>
+          <tr><th scope="row">탄수화물</th><td class="num amount">0 g</td><td class="num pct">0 %</td></tr>
+          <tr><th scope="row">단백질</th><td class="num amount">0 g</td><td class="num pct">0 %</td></tr>
+          <tr><th scope="row">지방</th><td class="num amount">0 g</td><td class="num pct">0 %</td></tr>
+          <tr><th scope="row">나트륨</th><td class="num amount">0 mg</td><td class="num pct">0 %</td></tr>
+          <tr class="split"><th scope="row">실리마린</th><td class="num amount">130 mg</td><td class="num pct"></td></tr>
+          <tr><th scope="row">총 모나콜린 K</th><td class="num amount">8 mg</td><td class="num pct"></td></tr>
+          <tr><th scope="row">코로솔산</th><td class="num amount">1.3 mg</td><td class="num pct"></td></tr>
+          <tr><th scope="row">코엔자임Q10</th><td class="num amount">100 mg</td><td class="num pct"></td></tr>
+          <tr><th scope="row">비타민D</th><td class="num amount">25 ㎍</td><td class="num pct">250 %</td></tr>
         </tbody>
       </table>
     </div>
@@ -383,65 +397,39 @@
   </section>
 
   <!-- 03 원료명 및 함량 -->
-  <section>
-    <div class="sec-head">
-      <span class="no">03</span>
-      <h2>원료명 및 함량</h2>
-      <span class="line"></span>
+  <section class="raw">
+    <div class="sec-title">
+      <span class="en">Ingredients</span>
+      <span class="ko">원료명 및 함량</span>
     </div>
-    <div class="raw">
-      <h3>원료명 및 함량</h3>
-      <p>
-        밀크씨슬추출물(<b>미국산</b>), 홍국분말(<b>인도산</b>), 바나바잎 추출물(<b>인도산</b>), 코엔자임Q10,
-        비타민D<sub>3</sub>혼합제제(비타민D<sub>3</sub>, 아라비아검, 자당, 옥수수전분, 가공유지, 이산화규소, 비타민E),
-        결정셀룰로스, 가교카복시메틸셀룰로스나트륨, 이산화규소, 스테아린산마그네슘, 히드록시프로필메틸셀룰로스,
-        레몬향(향료), 흑마늘추출분말
-      </p>
-    </div>
+    <p>
+      밀크씨슬추출물(<b>미국산</b>), 홍국분말(<b>인도산</b>), 바나바잎 추출물(<b>인도산</b>), 코엔자임Q10,
+      비타민D<sub>3</sub>혼합제제(비타민D<sub>3</sub>, 아라비아검, 자당, 옥수수전분, 가공유지, 이산화규소, 비타민E),
+      결정셀룰로스, 가교카복시메틸셀룰로스나트륨, 이산화규소, 스테아린산마그네슘, 히드록시프로필메틸셀룰로스,
+      레몬향(향료), 흑마늘추출분말
+    </p>
   </section>
 
   <!-- 04 제품 정보 -->
   <section>
-    <div class="sec-head">
-      <span class="no">04</span>
-      <h2>제품 정보</h2>
-      <span class="line"></span>
+    <div class="sec-title">
+      <span class="en">Product Details</span>
+      <span class="ko">제품 정보</span>
     </div>
-    <dl class="info-grid">
-      <div class="info">
-        <dt>제품명</dt>
-        <dd>콜레스타</dd>
-      </div>
-      <div class="info">
-        <dt>내포장재질</dt>
-        <dd>폴리염화비닐(PVC), 알루미늄호일(AL-FOIL)</dd>
-      </div>
-      <div class="info">
-        <dt>제조원</dt>
-        <dd>우리바이오(주)<span class="sub">경기도 안산시 단원구 성곡로 79(성곡동)</span></dd>
-      </div>
-      <div class="info">
-        <dt>유통전문판매원</dt>
-        <dd>(주)씨오케이컴퍼니<span class="sub">서울특별시 금천구 가산디지털 1로 225, 506호 507호</span></dd>
-      </div>
-      <div class="info wide">
-        <dt>섭취량 및 섭취방법</dt>
-        <dd>1일 1회, 1회 1정을 충분한 물과 함께 섭취하십시오.</dd>
-      </div>
-      <div class="info">
-        <dt>고객상담실</dt>
-        <dd><span class="tel">1599 - 4890</span></dd>
-      </div>
-      <div class="info">
-        <dt>반품 및 교환처</dt>
-        <dd>구입처 및 고객상담실</dd>
-      </div>
+    <dl class="info">
+      <div class="row"><dt>제품명</dt><dd>콜레스타</dd></div>
+      <div class="row"><dt>제조원</dt><dd>우리바이오(주)<span class="sub">경기도 안산시 단원구 성곡로 79(성곡동)</span></dd></div>
+      <div class="row"><dt>유통전문판매원</dt><dd>(주)씨오케이컴퍼니<span class="sub">서울특별시 금천구 가산디지털 1로 225, 506호 507호</span></dd></div>
+      <div class="row"><dt>내포장재질</dt><dd>폴리염화비닐(PVC), 알루미늄호일(AL-FOIL)</dd></div>
+      <div class="row"><dt>섭취량 및 섭취방법</dt><dd>1일 1회, 1회 1정을 충분한 물과 함께 섭취하십시오.</dd></div>
+      <div class="row"><dt>고객상담실</dt><dd><span class="tel">1599 - 4890</span></dd></div>
+      <div class="row"><dt>반품 및 교환처</dt><dd>구입처 및 고객상담실</dd></div>
     </dl>
   </section>
 
   <!-- 안내사항 -->
   <div class="notice">
-    <h3>안내 및 주의사항</h3>
+    <h3>NOTICE</h3>
     <ul>
       <li>이상 사례 신고는 1577-2488</li>
       <li>본 제품은 질병의 예방 및 치료를 위한 의약품이 아닙니다.</li>
