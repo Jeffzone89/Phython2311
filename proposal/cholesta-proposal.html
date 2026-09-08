@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>콜레스타 공동구매 제안서</title>
+
+<script>
+/* ──────────────────────────────────────────────
+   여기 값만 고치면 됩니다.
+   비워두면("") 제안서에 노란색 '기입' 표시가 나옵니다.
+   다른 거래처에 보낼 때도 이 부분만 바꿔서 다시 뽑으세요.
+   ────────────────────────────────────────────── */
+const DATA = {
+  받는곳:   "오늘앤과일",
+  받는분:   "대표님",
+
+  보내는회사: "제이에스이 네트웍스",
+  보내는분:   "홍길동",
+  직함:      "대표",
+  연락처:    "",           // 예: 010-0000-0000
+  이메일:    "",           // 예: sales@jse.co.kr
+  사업자번호: "",           // 예: 000-00-00000
+
+  날짜:     "2026. 9. 8.",
+
+  가격: {
+    구성:     "",          // 예: 1박스 60정 (2개월분)
+    소비자가: "",          // 예: 59,000원
+    공구가:   "",          // 예: 39,000원
+    공급가:   "",          // 예: 27,000원
+    최소수량: "",          // 예: 50박스
+  },
+
+  조건: {
+    공급방식: "위탁, 사입 중 선택",
+    배송:     "저희 쪽에서 고객에게 택배 직배송",
+    배송비:   "",          // 예: 3,000원 / 5만원 이상 무료
+    정산:     "",          // 예: 공구 종료 후 7영업일 이내
+    재고:     "상시 보유. 공구 물량 바로 대응 가능",
+  },
+};
+/* ────────────────────────────────────────────── */
+</script>
+
+<style>
+  @page { size: A4; margin: 0; }
+
+  :root{
+    --green:#1f4438;
+    --green-pale:#eef2ef;
+    --gold:#b08d57;
+    --gold-pale:#f6f0e5;
+    --ivory:#f8f6f1;
+    --paper:#fffefb;
+    --ink:#22231e;
+    --ink-mid:#54564e;
+    --ink-soft:#8b8c83;
+    --line:#e3ddd1;
+    --line-strong:#c9c1b0;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:#8f8f8a;
+    color:var(--ink);
+    font-family:"Pretendard","Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+    font-size:10.5pt;
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+    word-break:keep-all;
+  }
+
+  .sheet{
+    position:relative;
+    width:210mm; height:296.8mm;
+    margin:0 auto;
+    background:var(--paper);
+    padding:24mm 22mm 22mm;
+    overflow:hidden;
+    page-break-after:always; break-after:page;
+  }
+  .sheet:last-child{ page-break-after:auto; break-after:auto; }
+  @media screen{ .sheet{ margin:10mm auto; box-shadow:0 4px 24px rgba(0,0,0,.28); } }
+
+  .rh{
+    position:absolute; top:12mm; left:22mm; right:22mm;
+    display:flex; justify-content:space-between;
+    font-size:8pt; color:var(--ink-soft);
+    padding-bottom:2.5mm; border-bottom:1px solid var(--line);
+  }
+  .rf{
+    position:absolute; bottom:12mm; left:22mm; right:22mm;
+    text-align:right; font-size:8pt; color:var(--ink-soft);
+    padding-top:2.5mm; border-top:1px solid var(--line);
+  }
+
+  /* 표지 */
+  .cover{ padding:0; display:flex; flex-direction:column; }
+  .cover-top{
+    background:var(--green); color:#fff;
+    padding:34mm 22mm 26mm; position:relative;
+  }
+  .cover-top::after{
+    content:""; position:absolute; left:0; right:0; bottom:0;
+    height:2.5mm; background:var(--gold);
+  }
+  .cover-top .kicker{
+    font-size:9pt; letter-spacing:.5em; color:rgba(255,255,255,.62);
+  }
+  .cover-top h1{
+    margin:9mm 0 0; font-size:31pt; font-weight:800;
+    letter-spacing:-.035em; line-height:1.22;
+  }
+  .cover-top .sub{
+    margin:6mm 0 0; font-size:11.5pt; font-weight:400;
+    color:rgba(255,255,255,.8); letter-spacing:-.01em;
+  }
+  .cover-body{ flex:1; padding:20mm 22mm 0; display:flex; flex-direction:column; }
+
+  .meta{ display:grid; grid-template-columns:24mm 1fr; gap:4mm 7mm; font-size:10.5pt; }
+  .meta dt{ color:var(--ink-soft); font-size:9pt; padding-top:.6mm; }
+  .meta dd{ margin:0; font-weight:600; }
+
+  .cover-note{
+    margin-top:16mm; padding-top:8mm; border-top:1px solid var(--line);
+    font-size:10pt; line-height:1.9; color:var(--ink-mid);
+  }
+
+  .cover-sign{ margin-top:auto; padding:0 0 24mm; }
+  .cover-sign .co{ font-size:13pt; font-weight:700; color:var(--green); letter-spacing:-.02em; }
+  .cover-sign .who{ margin-top:1.5mm; font-size:10pt; color:var(--ink-mid); }
+  .cover-sign .cc{ margin-top:2.5mm; font-size:9pt; color:var(--ink-soft); }
+
+  /* 섹션 */
+  h2{
+    margin:0 0 7mm; padding-bottom:3mm;
+    font-size:15pt; font-weight:700; color:var(--green);
+    letter-spacing:-.025em; border-bottom:2px solid var(--green);
+  }
+  h2 span{ color:var(--gold); margin-right:2.5mm; }
+
+  h3{
+    margin:9mm 0 3mm; font-size:11pt; font-weight:700;
+    color:var(--green); letter-spacing:-.015em;
+  }
+  h3:first-of-type{ margin-top:0; }
+
+  p{ margin:0 0 4.5mm; }
+  .t{ font-size:10.5pt; line-height:1.85; color:var(--ink-mid); }
+  .t b{ color:var(--ink); font-weight:600; }
+
+  .box{
+    background:var(--green-pale); padding:5mm 6mm;
+    margin:0 0 5mm; font-size:10pt; line-height:1.8; color:var(--ink-mid);
+    border-left:3px solid var(--green);
+  }
+  .box b{ color:var(--green); font-weight:700; }
+
+  .note{
+    background:var(--gold-pale); border:1px solid #e6d9c0;
+    padding:4.5mm 5.5mm; font-size:8.8pt; line-height:1.75; color:var(--ink-mid);
+  }
+  .note b{ color:#8a6a3a; }
+  .note p{ margin:0 0 2mm; }
+  .note p:last-child{ margin:0; }
+
+  /* 기능성 목록 */
+  .fn{
+    display:flex; gap:5mm; align-items:baseline;
+    padding:3.8mm 0; border-bottom:1px solid var(--line);
+  }
+  .fn:first-of-type{ border-top:1px solid var(--line-strong); }
+  .fn .nm{ flex:0 0 38mm; font-size:10.5pt; font-weight:700; color:var(--green); letter-spacing:-.01em; }
+  .fn .cl{ flex:1; font-size:9.6pt; color:var(--ink-mid); line-height:1.6; }
+  .fn .qt{ flex:0 0 27mm; text-align:right; font-size:9.6pt; color:var(--ink); font-variant-numeric:tabular-nums; }
+  .fn .qt i{ display:block; font-style:normal; font-size:7.8pt; color:var(--ink-soft); }
+
+  /* 스펙 줄 */
+  .strip{ display:flex; border-top:1px solid var(--line-strong); border-bottom:1px solid var(--line-strong); margin-bottom:8mm; }
+  .strip div{ flex:1; text-align:center; padding:4.5mm 2mm; }
+  .strip div + div{ border-left:1px solid var(--line); }
+  .strip dt{ font-size:8pt; color:var(--ink-soft); margin-bottom:1.4mm; }
+  .strip dd{ margin:0; font-size:11pt; font-weight:700; color:var(--green); letter-spacing:-.015em; }
+
+  /* 표 */
+  table{ width:100%; border-collapse:collapse; font-size:9.5pt; }
+  th, td{ padding:2.9mm 3.5mm; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+  thead th{ background:var(--green); color:#fff; font-weight:600; font-size:8.8pt; border-bottom:none; }
+  tbody th{ width:32mm; font-weight:600; color:var(--ink-mid); background:var(--ivory); font-size:9.2pt; }
+  table.num td:not(:first-child), table.num th:not(:first-child){ text-align:right; font-variant-numeric:tabular-nums; }
+  tbody tr:last-child th, tbody tr:last-child td{ border-bottom:1px solid var(--line-strong); }
+  td.em{ font-weight:700; color:var(--green); }
+  .cap{ font-size:8.3pt; color:var(--ink-soft); margin:2.5mm 0 0; }
+
+  .ing{
+    font-size:8.8pt; line-height:1.9; color:var(--ink-mid);
+    background:var(--ivory); padding:4.5mm 5mm; border:1px solid var(--line);
+  }
+
+  /* 기입 필요 */
+  .todo{
+    display:inline-block; min-width:24mm;
+    background:#fdf2d2; border-bottom:1.4px dotted #c09b1f;
+    color:#856611; font-size:8.4pt; font-weight:600; padding:.3mm 2.5mm;
+  }
+  .todo::before{ content:"기입: "; opacity:.55; font-weight:500; }
+
+  /* 진행 절차 */
+  ol.flow{ margin:0; padding:0; list-style:none; counter-reset:f; }
+  ol.flow li{
+    counter-increment:f; position:relative;
+    padding:0 0 4.5mm 11mm; font-size:10pt; color:var(--ink-mid); line-height:1.7;
+  }
+  ol.flow li::before{
+    content:counter(f); position:absolute; left:0; top:.6mm;
+    width:6.2mm; height:6.2mm; border-radius:50%;
+    background:var(--green); color:#fff;
+    font-size:8.3pt; font-weight:700; line-height:6.2mm; text-align:center;
+  }
+  ol.flow li b{ color:var(--green); font-weight:700; }
+
+  ul.plain{ margin:0 0 4mm; padding-left:5mm; font-size:10pt; color:var(--ink-mid); line-height:1.85; }
+  ul.plain li{ margin-bottom:1.5mm; }
+  ul.plain b{ color:var(--ink); font-weight:600; }
+
+  .sign{
+    margin-top:9mm; padding:6mm 7mm; background:var(--ivory); border:1px solid var(--line);
+  }
+  .contact{ display:grid; grid-template-columns:20mm 1fr; gap:2.6mm 5mm; font-size:9.8pt; }
+  .contact dt{ color:var(--ink-soft); font-size:8.8pt; padding-top:.4mm; }
+  .contact dd{ margin:0; font-weight:600; }
+</style>
+</head>
+<body>
+
+<!-- 표지 -->
+<section class="sheet cover">
+  <div class="cover-top">
+    <div class="kicker">제 안 서</div>
+    <h1>건강기능식품<br>공동구매 제안</h1>
+    <p class="sub">콜레스타 (밀크씨슬 · 홍국 · 바나바잎 · 코엔자임Q10 · 비타민D)</p>
+  </div>
+
+  <div class="cover-body">
+    <dl class="meta">
+      <dt>받는 곳</dt><dd><span data-f="받는곳"></span> <span data-f="받는분"></span> 귀하</dd>
+      <dt>보내는 곳</dt><dd data-f="보내는회사"></dd>
+      <dt>제목</dt><dd>콜레스타 공동구매 공급 제안</dd>
+      <dt>작성일</dt><dd data-f="날짜"></dd>
+    </dl>
+
+    <p class="cover-note">
+      과일을 정기적으로 구매하시는 고객층과 건강기능식품 구매층이 상당 부분 겹칩니다.
+      기존 고객을 그대로 두고 품목만 하나 더 얹는 방식으로 제안드립니다.
+      조건은 <span data-f="받는곳"></span> 운영 방식에 맞춰 조정하겠습니다.
+    </p>
+
+    <div class="cover-sign">
+      <div class="co" data-f="보내는회사"></div>
+      <div class="who"><span data-f="직함"></span> <span data-f="보내는분"></span></div>
+      <div class="cc"><span data-f="연락처"></span> &nbsp; <span data-f="이메일"></span></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- 1. 제안 배경 -->
+<section class="sheet">
+  <div class="rh"><span>콜레스타 공동구매 제안서</span><span data-f="보내는회사"></span></div>
+
+  <h2><span>1.</span>제안 배경</h2>
+
+  <p class="t">
+    안녕하십니까. 건강기능식품을 유통하는 <b data-f="보내는회사"></b>
+    <span data-f="직함"></span> <b data-f="보내는분"></b>입니다.
+  </p>
+  <p class="t">
+    아내가 <span data-f="받는곳"></span>에서 과일을 자주 주문하고 있어 저희 집도 오래된 고객입니다.
+    얼마 전 단톡방에 들어갔다가 건강기능식품도 취급하신다는 글을 보고,
+    저희가 공급하는 제품 하나를 제안드리려고 연락드렸습니다.
+  </p>
+
+  <h3>저희 회사</h3>
+  <p class="t">
+    호주와 뉴질랜드에서 들여오는 제품, 국내 제조 제품을 함께 취급합니다.
+    원료 규격서와 제조시설을 직접 확인한 것만 다루고 있고,
+    주로 공동구매와 라이브커머스 채널에 납품해 왔습니다.
+  </p>
+
+  <h3>과일 채널에 건강기능식품을 붙이는 이유</h3>
+  <p class="t">
+    제철 과일을 꾸준히 사시는 분들은 대부분 가족 건강을 직접 챙기는 40대 이상 주부층입니다.
+    콜레스테롤, 혈당, 간 수치는 이 연령대에서 관리가 시작되는 항목이라
+    제품을 처음부터 설명해야 하는 부담이 적은 편입니다.
+  </p>
+  <div class="box">
+    과일은 회전이 빠른 대신 마진 폭이 크지 않습니다.
+    건강기능식품은 <b>객단가가 높고 두세 달 주기로 재구매</b>가 일어납니다.
+    새로 고객을 모으지 않고도 채널 매출을 올릴 수 있는 품목이라고 봅니다.
+  </div>
+
+  <h3>제안 요지</h3>
+  <table>
+    <tbody>
+      <tr><th>품목</th><td class="em">콜레스타 (건강기능식품, 정제)</td></tr>
+      <tr><th>방식</th><td><span data-f="받는곳"></span>에서 하시던 공동구매 방식 그대로</td></tr>
+      <tr><th>물량</th><td>상시 재고 보유. 공구 물량 바로 대응 가능</td></tr>
+      <tr><th>지원</th><td>상세페이지 제공, 샘플 제공, 제품 문의 응대</td></tr>
+    </tbody>
+  </table>
+
+  <div class="rf">1</div>
+</section>
+
+
+<!-- 2. 제품 -->
+<section class="sheet">
+  <div class="rh"><span>콜레스타 공동구매 제안서</span><span data-f="보내는회사"></span></div>
+
+  <h2><span>2.</span>제품 소개</h2>
+
+  <div class="strip">
+    <div><dt>제형</dt><dd>정제</dd></div>
+    <div><dt>1일 섭취량</dt><dd>1정 (900 mg)</dd></div>
+    <div><dt>섭취 횟수</dt><dd>1일 1회</dd></div>
+    <div><dt>기능성 원료</dt><dd>5종</dd></div>
+  </div>
+
+  <p class="t">
+    콜레스타는 기능성 원료 다섯 가지가 한 정에 들어 있는 제품입니다.
+    보통 따로 사서 드시는 밀크씨슬, 홍국, 바나바잎, 코엔자임Q10, 비타민D를
+    하루 한 정으로 정리했습니다. 여러 통을 챙겨 드시던 분들께는
+    <b>통 수를 줄이면서 비용도 낮출 수 있다</b>는 점이 설명하기 가장 쉬운 부분입니다.
+  </p>
+
+  <h3>영양 · 기능정보</h3>
+  <div class="fn">
+    <div class="nm">밀크씨슬 추출물</div>
+    <div class="cl">간 건강에 도움을 줄 수 있음</div>
+    <div class="qt">130 mg<i>실리마린</i></div>
+  </div>
+  <div class="fn">
+    <div class="nm">홍국</div>
+    <div class="cl">혈중 콜레스테롤 개선에 도움을 줄 수 있음</div>
+    <div class="qt">8 mg<i>총 모나콜린 K</i></div>
+  </div>
+  <div class="fn">
+    <div class="nm">바나바잎 추출물</div>
+    <div class="cl">식후 혈당상승 억제에 도움을 줄 수 있음</div>
+    <div class="qt">1.3 mg<i>코로솔산</i></div>
+  </div>
+  <div class="fn">
+    <div class="nm">코엔자임Q10</div>
+    <div class="cl">항산화 · 높은 혈압 감소에 도움을 줄 수 있음</div>
+    <div class="qt">100 mg<i>코엔자임Q10</i></div>
+  </div>
+  <div class="fn">
+    <div class="nm">비타민D</div>
+    <div class="cl">칼슘과 인이 흡수되고 이용되는데 필요, 뼈의 형성과 유지에 필요,
+      골다공증발생 위험 감소에 도움을 줌</div>
+    <div class="qt">25 ㎍<i>기준치 250%</i></div>
+  </div>
+
+  <div class="note" style="margin-top:8mm;">
+    <p><b>기능성 문구는 그대로 써 주십시오.</b>
+      위 문구는 건강기능식품 공전에 등재된 원료의 인정 문구를 옮긴 것입니다.
+      판매 페이지나 공구 안내문에서도 문구를 바꾸지 마시고 원문 그대로 사용해 주십시오.</p>
+    <p>"도움을 줄 수 있음"을 "개선됩니다", "효과가 있습니다" 같은 단정 표현으로 바꾸면
+      표시광고 위반에 걸릴 수 있습니다. 질병 치료·예방을 연상시키는 표현도 마찬가지입니다.</p>
+  </div>
+
+  <div class="rf">2</div>
+</section>
+
+
+<!-- 3. 제품 상세 -->
+<section class="sheet">
+  <div class="rh"><span>콜레스타 공동구매 제안서</span><span data-f="보내는회사"></span></div>
+
+  <h2><span>3.</span>제품 표시사항</h2>
+
+  <h3>영양성분 <span style="font-weight:400;font-size:9pt;color:var(--ink-soft);">1일 섭취량 1정(900 mg) 당</span></h3>
+  <table class="num">
+    <thead><tr><th>성분</th><th>함량</th><th>%영양성분기준치</th></tr></thead>
+    <tbody>
+      <tr><td>열량</td><td>0 kcal</td><td></td></tr>
+      <tr><td>탄수화물</td><td>0 g</td><td>0 %</td></tr>
+      <tr><td>단백질</td><td>0 g</td><td>0 %</td></tr>
+      <tr><td>지방</td><td>0 g</td><td>0 %</td></tr>
+      <tr><td>나트륨</td><td>0 mg</td><td>0 %</td></tr>
+      <tr><td class="em">실리마린</td><td class="em">130 mg</td><td></td></tr>
+      <tr><td class="em">총 모나콜린 K</td><td class="em">8 mg</td><td></td></tr>
+      <tr><td class="em">코로솔산</td><td class="em">1.3 mg</td><td></td></tr>
+      <tr><td class="em">코엔자임Q10</td><td class="em">100 mg</td><td></td></tr>
+      <tr><td class="em">비타민D</td><td class="em">25 ㎍</td><td>250 %</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">※ %영양성분기준치 : 1일 영양성분기준치에 대한 비율</p>
+
+  <h3>원료명 및 함량</h3>
+  <div class="ing">
+    밀크씨슬추출물(미국산), 홍국분말(인도산), 바나바잎 추출물(인도산), 코엔자임Q10,
+    비타민D<sub>3</sub> 혼합제제(비타민D<sub>3</sub>, 아라비아검, 자당, 옥수수전분, 가공유지,
+    이산화규소, 비타민E), 결정셀룰로스, 가교카복시메틸셀룰로스나트륨, 이산화규소,
+    스테아린산마그네슘, 히드록시프로필메틸셀룰로스, 레몬향(향료), 흑마늘추출분말
+  </div>
+
+  <div class="rf">3</div>
+</section>
+
+
+<!-- 4. 제품 정보와 고객 안내 -->
+<section class="sheet">
+  <div class="rh"><span>콜레스타 공동구매 제안서</span><span data-f="보내는회사"></span></div>
+
+  <h2><span>4.</span>제품 정보와 고객 안내</h2>
+
+  <h3>제품 정보</h3>
+  <table>
+    <tbody>
+      <tr><th>제품명</th><td class="em">콜레스타</td></tr>
+      <tr><th>제조원</th><td>우리바이오(주) / 경기도 안산시 단원구 성곡로 79(성곡동)</td></tr>
+      <tr><th>유통전문판매원</th><td>(주)씨오케이컴퍼니 / 서울특별시 금천구 가산디지털1로 225, 506호 507호</td></tr>
+      <tr><th>내포장 재질</th><td>폴리염화비닐(PVC), 알루미늄호일(AL-FOIL)</td></tr>
+      <tr><th>섭취방법</th><td>1일 1회, 1회 1정을 충분한 물과 함께 섭취</td></tr>
+      <tr><th>반품 및 교환처</th><td>구입처 및 고객상담실</td></tr>
+    </tbody>
+  </table>
+
+  <h3>판매 페이지에 반드시 들어가야 하는 문구</h3>
+  <div class="note">
+    <p>본 제품은 질병의 예방 및 치료를 위한 의약품이 아닙니다.</p>
+    <p>이상사례 신고는 1577-2488.</p>
+    <p>본 제품은 공정거래위원회고시 소비자분쟁해결기준에 의거 교환 또는 보상을 받을 수 있습니다.</p>
+    <p>본 제품은 알류(가금류), 우유, 메밀, 땅콩, 대두, 밀, 고등어, 게, 새우, 돼지고기, 복숭아,
+      토마토, 아황산류, 호두, 닭고기, 쇠고기, 오징어, 조개류(굴·전복·홍합 포함), 잣을 사용한
+      제품과 같은 제조시설에서 제조하고 있습니다.</p>
+  </div>
+
+  <h3>공구 안내문에 같이 넣어주시면 좋은 내용</h3>
+  <p class="t">
+    홍국이 들어간 제품이라 임산부와 수유부, 간 질환이 있는 분은 섭취를 피하셔야 합니다.
+    고지혈증 약(스타틴 계열) 등 의약품을 드시는 분은 전문가와 상담 후 드시도록 안내해 주십시오.
+    미리 고지해 두시면 나중에 반품이나 클레임이 줄어듭니다.
+  </p>
+
+  <div class="rf">4</div>
+</section>
+
+
+<!-- 5. 공급 조건 -->
+<section class="sheet">
+  <div class="rh"><span>콜레스타 공동구매 제안서</span><span data-f="보내는회사"></span></div>
+
+  <h2><span>5.</span>공급 조건</h2>
+
+  <h3>가격</h3>
+  <table>
+    <tbody>
+      <tr><th>판매 구성</th><td data-f="가격.구성"></td></tr>
+      <tr><th>정상 소비자가</th><td data-f="가격.소비자가"></td></tr>
+      <tr><th>공동구매가</th><td class="em" data-f="가격.공구가"></td></tr>
+      <tr><th>공급가</th><td class="em" data-f="가격.공급가"></td></tr>
+      <tr><th>최소 발주 수량</th><td data-f="가격.최소수량"></td></tr>
+    </tbody>
+  </table>
+  <p class="cap">※ 공구 수량 규모에 따라 공급가는 다시 조정할 수 있습니다.</p>
+
+  <h3>공급 · 정산</h3>
+  <table>
+    <tbody>
+      <tr><th>공급 방식</th><td data-f="조건.공급방식"></td></tr>
+      <tr><th>배송</th><td data-f="조건.배송"></td></tr>
+      <tr><th>배송비</th><td data-f="조건.배송비"></td></tr>
+      <tr><th>정산</th><td data-f="조건.정산"></td></tr>
+      <tr><th>재고</th><td data-f="조건.재고"></td></tr>
+    </tbody>
+  </table>
+
+  <h3>저희가 지원하는 것</h3>
+  <ul class="plain">
+    <li><b>상세페이지</b> — 상품등록용 이미지를 그대로 드립니다. 따로 제작하실 필요 없습니다.</li>
+    <li><b>샘플</b> — 공구 전에 대표님 확인용과 체험단용을 무상으로 보내드립니다.</li>
+    <li><b>고객 문의</b> — 성분, 섭취법, 약 병용 관련 문의는 저희가 직접 답변합니다.</li>
+    <li><b>물량</b> — 공구 기간 중 재고를 따로 잡아둡니다. 품절 걱정은 안 하셔도 됩니다.</li>
+  </ul>
+
+  <div class="rf">5</div>
+</section>
+
+
+<!-- 6. 진행 -->
+<section class="sheet">
+  <div class="rh"><span>콜레스타 공동구매 제안서</span><span data-f="보내는회사"></span></div>
+
+  <h2><span>6.</span>진행 방법</h2>
+
+  <p class="t">회신 주시면 아래 순서로 진행하겠습니다.</p>
+
+  <ol class="flow">
+    <li><b>연락 주시기</b><br>전화나 메일 편하신 쪽으로 주십시오. 온라인 미팅도 가능합니다.</li>
+    <li><b>샘플 발송</b><br>실물 확인하시도록 샘플을 무상으로 보내드립니다.</li>
+    <li><b>조건 확정</b><br>공급가, 수량, 정산 조건을 협의해서 정합니다.</li>
+    <li><b>공구 오픈</b><br>상세페이지 넘겨드리고 공구 진행하시면 됩니다.</li>
+    <li><b>출고와 정산</b><br>주문 취합해 주시면 저희가 직배송하고, 협의한 일정에 맞춰 정산합니다.</li>
+  </ol>
+
+  <h3>알려주셨으면 하는 것</h3>
+  <table>
+    <tbody>
+      <tr><th>공구 시기</th><td>채널 일정에 맞춰 조정하겠습니다.</td></tr>
+      <tr><th>예상 수량</th><td>대략적인 규모를 알려주시면 공급가를 다시 잡아보겠습니다.</td></tr>
+      <tr><th>운영 방식</th><td>위탁(무재고)과 사입 중 어느 쪽이 편하신지요.</td></tr>
+    </tbody>
+  </table>
+
+  <p class="t" style="margin-top:9mm;">
+    신선한 먹거리로 신뢰를 쌓아 오신 곳에 저희 제품을 하나 얹을 수 있다면 좋겠습니다.
+    관심 있으시면 연락 주십시오. 조건 정리해서 다시 보내드리고 샘플도 함께 부치겠습니다.
+    바쁘신 중에 읽어주셔서 감사합니다.
+  </p>
+
+  <div class="sign">
+    <dl class="contact">
+      <dt>회사</dt><dd data-f="보내는회사"></dd>
+      <dt>담당</dt><dd><span data-f="직함"></span> <span data-f="보내는분"></span></dd>
+      <dt>연락처</dt><dd data-f="연락처"></dd>
+      <dt>이메일</dt><dd data-f="이메일"></dd>
+      <dt>사업자번호</dt><dd data-f="사업자번호"></dd>
+    </dl>
+  </div>
+
+  <div class="rf">6</div>
+</section>
+
+
+<script>
+(function () {
+  const get = (o, p) => p.split(".").reduce((a, k) => (a == null ? a : a[k]), o);
+  document.querySelectorAll("[data-f]").forEach((el) => {
+    const key = el.getAttribute("data-f");
+    const val = get(DATA, key);
+    el.textContent = "";
+    if (val === undefined || val === null || String(val).trim() === "") {
+      const s = document.createElement("span");
+      s.className = "todo";
+      s.textContent = key.split(".").pop();
+      el.appendChild(s);
+    } else {
+      el.textContent = val;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
