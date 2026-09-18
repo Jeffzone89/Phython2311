@@ -1,24 +1,40 @@
 """일회성 테스트 스크립트 (용도는 그때그때 바뀜).
 
-현재: apicenter.commerce.naver.com의 API 문서 페이지를 Playwright로 렌더링해
-"카탈로그 조회" 등 커머스API가 판매처별 가격 정보를 주는지 확인한다.
-Docusaurus 기반 OpenAPI 문서라 실제 파라미터/응답 스키마 표가 JS로 그려져서
-plain requests로는 안 보였다 (내용이 거의 비어있고 한글도 깨졌음).
+현재: 모바일 버전(m.shopping.naver.com)이 데스크톱 검색결과 페이지와
+차단 수준이 다른지 확인한다.
 """
 from playwright.sync_api import sync_playwright
 
-DOCS_URL = "https://apicenter.commerce.naver.com/docs/commerce-api/current/get-model-list-product"
+CANDIDATES = {
+    "mobile_search": "https://msearch.shopping.naver.com/search/all?query=%EC%BD%9C%EB%A0%88%EC%8A%A4%ED%83%80",
+    "mobile_shopping_m": "https://m.shopping.naver.com/search/all?query=%EC%BD%9C%EB%A0%88%EC%8A%A4%ED%83%80",
+}
 
 
 def main():
     with sync_playwright() as pw:
         browser = pw.chromium.launch()
-        page = browser.new_page(locale="ko-KR")
-        resp = page.goto(DOCS_URL, timeout=20000, wait_until="networkidle")
-        print(f"status: {resp.status if resp else None}")
-        text = page.inner_text("body")
-        print(f"본문 텍스트 길이: {len(text)}자\n")
-        print(text)
+        for name, url in CANDIDATES.items():
+            print(f"=== {name} ({url}) ===")
+            page = browser.new_page(
+                user_agent=(
+                    "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) "
+                    "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+                ),
+                locale="ko-KR",
+            )
+            try:
+                resp = page.goto(url, timeout=15000, wait_until="networkidle")
+                print(f"status: {resp.status if resp else None}")
+                text = page.inner_text("body")
+                print(f"본문 길이: {len(text)}자")
+                print(f"'콜레스타' 포함: {'콜레스타' in text}")
+                print(text[:1500])
+            except Exception as exc:
+                print(f"실패: {exc}")
+            finally:
+                page.close()
+            print()
         browser.close()
 
 
