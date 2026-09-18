@@ -17,6 +17,10 @@ on:
         description: "true면 Stage 1 PoC(실제 검색결과 원시 데이터 출력)만 실행"
         type: boolean
         default: false
+      run_reader_test:
+        description: "true면 외부 리더 프록시 우회 테스트만 실행 (일회성 진단용)"
+        type: boolean
+        default: false
 
 concurrency:
   group: price-monitor
@@ -51,6 +55,11 @@ jobs:
         working-directory: price-monitor
         run: python3 poc/poc_inspect_response.py
 
+      - name: Run reader-proxy bypass test
+        if: ${{ inputs.run_reader_test == true }}
+        working-directory: price-monitor
+        run: python3 poc/poc_test_reader_proxy.py
+
       - name: Upload PoC raw page dump
         if: ${{ inputs.run_poc == true && always() }}
         uses: actions/upload-artifact@v4
@@ -60,7 +69,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Run monitor
-        if: ${{ inputs.run_poc != true }}
+        if: ${{ inputs.run_poc != true && inputs.run_reader_test != true }}
         working-directory: price-monitor
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -75,7 +84,7 @@ jobs:
           fi
 
       - name: Commit updated state
-        if: ${{ inputs.dry_run != true && inputs.test_alert != true && inputs.run_poc != true }}
+        if: ${{ inputs.dry_run != true && inputs.test_alert != true && inputs.run_poc != true && inputs.run_reader_test != true }}
         run: |
           git config user.name "price-monitor-bot"
           git config user.email "actions@users.noreply.github.com"
