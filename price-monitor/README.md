@@ -5,8 +5,10 @@
 
 ## 준비물 (Stage 0)
 
-1. **NAVER API HUB** ([ncloud.com](https://www.ncloud.com/product/applicationService/naverApiHub))에서 검색(쇼핑) API 신청 → Client ID/Secret 발급
-   - 현재 한시적 무료 제공, 검색 API 무료 한도는 하루 25,000회 / 월 775,000회 (이 프로그램은 하루 50~150회 수준만 사용)
+1. **developers.naver.com** (ncloud.com "NAVER API HUB"가 아님 — 거긴 쇼핑 상품검색을 제공하지 않음)에서
+   Application 등록 → 사용 API에서 "검색" 선택 → 쇼핑 검색 Client ID/Secret 발급
+   - 공식 문서: 검색 API > 쇼핑 검색 개요 (`openapi.naver.com/v1/search/shop.json`)
+   - 무료 한도 하루 25,000회 (이 프로그램은 하루 50~150회 수준만 사용, 여유 충분)
 2. **텔레그램 봇** 생성 (@BotFather) → 봇 토큰 발급, 본인과의 채팅으로 `chat_id` 확인
 3. 발급받은 4개 값을 리포지토리 **Settings → Secrets and variables → Actions**에 등록:
    - `NAVER_CLIENT_ID`

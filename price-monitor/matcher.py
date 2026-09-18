@@ -1,11 +1,15 @@
 import re
+import warnings
 from dataclasses import dataclass
 from typing import Optional
 
 import catalog_fetcher
 from config import OWNER_MALL_NAME, OWNER_PRODUCT_ID, OWNER_STORE_SLUG, PRODUCT_VARIANTS
+from naver_api_client import product_kind
 
 CATALOG_LINK_PATTERN = re.compile(r"/catalog/(\d+)")
+# 공식 문서 productType 표 기준: 상품종류 1 = "가격비교 상품"(그룹 대표 항목).
+CATALOG_PRODUCT_KIND = 1
 
 
 @dataclass
@@ -29,6 +33,11 @@ def build_groups(items):
         m = CATALOG_LINK_PATTERN.search(item.get("link") or "")
         if m:
             catalog_ids.add(m.group(1))
+            if product_kind(item.get("productType")) != CATALOG_PRODUCT_KIND:
+                warnings.warn(
+                    f"link는 /catalog/ 패턴인데 productType={item.get('productType')}로 "
+                    f"'가격비교 상품'이 아님 (productId={item.get('productId')}) - 교차검증 실패, 확인 필요"
+                )
 
     for catalog_id in catalog_ids:
         group_key = f"catalog:{catalog_id}"
