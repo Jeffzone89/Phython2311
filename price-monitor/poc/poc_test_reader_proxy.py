@@ -1,21 +1,21 @@
-"""일회성 테스트 스크립트 (용도는 그때그때 바뀜).
-
-현재: blackpoint.codes/tracking 페이지 내용을 확인한다 (사용자가 공유).
-"""
+"""일회성 테스트: sellerradar.co.kr이 실제로 폐쇄됐는지 확인."""
 from playwright.sync_api import sync_playwright
 
-URL = "https://blackpoint.codes/tracking"
+URL = "https://sellerradar.co.kr/"
 
 
 def main():
     with sync_playwright() as pw:
         browser = pw.chromium.launch()
         page = browser.new_page(locale="ko-KR")
-        resp = page.goto(URL, timeout=20000, wait_until="networkidle")
-        print(f"status: {resp.status if resp else None}")
-        text = page.inner_text("body")
-        print(f"본문 길이: {len(text)}자\n")
-        print(text)
+        try:
+            resp = page.goto(URL, timeout=15000, wait_until="networkidle")
+            print(f"status: {resp.status if resp else None}")
+            text = page.inner_text("body")
+            print(f"본문 길이: {len(text)}자\n")
+            print(text[:2000])
+        except Exception as exc:
+            print(f"실패: {exc}")
         browser.close()
 
 
