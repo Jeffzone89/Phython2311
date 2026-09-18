@@ -2,7 +2,7 @@ import argparse
 import datetime
 
 import matcher
-import naver_api_client
+import naver_search_client
 import state_store
 import telegram_notifier
 from config import KEYWORD
@@ -59,7 +59,7 @@ def main():
         print("테스트 알림 발송 완료")
         return
 
-    items = naver_api_client.search_shopping()
+    items = naver_search_client.search_shopping()
     groups = matcher.build_groups(items)
 
     prev_state = state_store.load_state()

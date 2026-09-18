@@ -5,7 +5,7 @@ from typing import Optional
 
 import catalog_fetcher
 from config import OWNER_MALL_NAME, OWNER_PRODUCT_ID, OWNER_STORE_SLUG, PRODUCT_VARIANTS
-from naver_api_client import product_kind
+from naver_search_client import product_kind
 
 CATALOG_LINK_PATTERN = re.compile(r"/catalog/(\d+)")
 # 공식 문서 productType 표 기준: 상품종류 1 = "가격비교 상품"(그룹 대표 항목).

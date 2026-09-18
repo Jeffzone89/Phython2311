@@ -3,16 +3,22 @@
 네이버쇼핑 "콜레스타" 검색결과에서 힐러문이 최저가 지위를 잃으면 텔레그램으로 알림을 보내는 자동화 봇입니다.
 설계 배경과 전체 계획은 대화 세션에서 확정된 기획서를 참고하세요.
 
+## 데이터 수집 방식 변경 기록
+
+원래는 네이버 오픈API(쇼핑검색)를 쓰려 했으나, 가입 과정에서 developers.naver.com에도
+NAVER API HUB(ncloud.com)에도 실제로 상품 가격을 주는 API를 찾지 못했다(전자는 "검색"
+카테고리 자체가 목록에 없었고, 후자는 "쇼핑인사이트"라는 트렌드 통계만 있고 개별 상품
+가격은 없었음). 커머스API센터(apicenter.commerce.naver.com)도 검토했으나 API 호출을
+고정 IP 최대 3개로 제한하는 방식이라, IP가 계속 바뀌는 GitHub Actions 호스팅 러너와
+근본적으로 맞지 않아 제외했다. 그래서 **검색결과 페이지(search.shopping.naver.com)를
+직접 조회하는 방식**으로 전환했다 — API 키/IP 등록이 전혀 필요 없다.
+
 ## 준비물 (Stage 0)
 
-1. **developers.naver.com** (ncloud.com "NAVER API HUB"가 아님 — 거긴 쇼핑 상품검색을 제공하지 않음)에서
-   Application 등록 → 사용 API에서 "검색" 선택 → 쇼핑 검색 Client ID/Secret 발급
-   - 공식 문서: 검색 API > 쇼핑 검색 개요 (`openapi.naver.com/v1/search/shop.json`)
-   - 무료 한도 하루 25,000회 (이 프로그램은 하루 50~150회 수준만 사용, 여유 충분)
-2. **텔레그램 봇** 생성 (@BotFather) → 봇 토큰 발급, 본인과의 채팅으로 `chat_id` 확인
-3. 발급받은 4개 값을 리포지토리 **Settings → Secrets and variables → Actions**에 등록:
-   - `NAVER_CLIENT_ID`
-   - `NAVER_CLIENT_SECRET`
+1. **텔레그램 봇** 생성 (@BotFather, `t.me/BotFather`) → `/newbot`으로 봇 토큰 발급,
+   본인과 봇의 채팅방에서 메시지를 하나 보낸 뒤 `https://api.telegram.org/bot{토큰}/getUpdates`로
+   `chat_id` 확인
+2. 발급받은 값을 리포지토리 **Settings → Secrets and variables → Actions**에 등록:
    - `TELEGRAM_BOT_TOKEN`
    - `TELEGRAM_CHAT_ID`
 
@@ -21,9 +27,16 @@
 ```bash
 cd price-monitor
 pip install -r requirements.txt
-export NAVER_CLIENT_ID=...
-export NAVER_CLIENT_SECRET=...
 python3 poc/poc_inspect_response.py
+```
+
+API 키가 필요 없다. 단, `naver_search_client.py`의 파싱 로직(`__NEXT_DATA__` 임베디드
+JSON 가정)은 네트워크가 막힌 환경에서 작성되어 실제 페이지로 검증되지 않았다.
+`SearchPageError`가 나면 아래로 원본 HTML을 저장해 직접 구조를 확인하고
+`naver_search_client.py`의 `_find_item_list()`/`_normalize()`를 실제 구조에 맞게 고칠 것.
+
+```bash
+python3 poc/poc_catalog_page.py "https://search.shopping.naver.com/search/all?query=콜레스타"
 ```
 
 출력에서 확인할 것:

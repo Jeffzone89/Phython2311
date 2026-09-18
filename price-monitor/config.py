@@ -17,15 +17,7 @@ PRODUCT_VARIANTS = [
     },
 ]
 
-# NOTE: Stage 0에서 NAVER API HUB 요금제/엔드포인트 확인 후 필요시 URL 조정.
-NAVER_API_URL = "https://openapi.naver.com/v1/search/shop.json"
-NAVER_CLIENT_ID = os.environ.get("NAVER_CLIENT_ID")
-NAVER_CLIENT_SECRET = os.environ.get("NAVER_CLIENT_SECRET")
-
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
-
-DISPLAY = 100
-SORT = "sim"
 
 STATE_FILE = os.path.join(os.path.dirname(__file__), "state.json")
