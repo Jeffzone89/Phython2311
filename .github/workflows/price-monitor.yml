@@ -9,6 +9,14 @@ on:
         description: "true면 알림 발송/상태 커밋 없이 콘솔 출력만 수행"
         type: boolean
         default: false
+      test_alert:
+        description: "true면 텔레그램 배선 확인용 테스트 메시지 1건만 발송하고 종료"
+        type: boolean
+        default: false
+      run_poc:
+        description: "true면 Stage 1 PoC(실제 검색결과 원시 데이터 출력)만 실행"
+        type: boolean
+        default: false
 
 concurrency:
   group: price-monitor
@@ -30,20 +38,28 @@ jobs:
 
       - run: pip install -r price-monitor/requirements.txt
 
+      - name: Run PoC (Stage 1)
+        if: ${{ inputs.run_poc == 'true' }}
+        working-directory: price-monitor
+        run: python3 poc/poc_inspect_response.py
+
       - name: Run monitor
+        if: ${{ inputs.run_poc != 'true' }}
         working-directory: price-monitor
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          if [ "${{ inputs.dry_run }}" = "true" ]; then
+          if [ "${{ inputs.test_alert }}" = "true" ]; then
+            python3 run.py --test-alert
+          elif [ "${{ inputs.dry_run }}" = "true" ]; then
             python3 run.py --dry-run
           else
             python3 run.py
           fi
 
       - name: Commit updated state
-        if: ${{ inputs.dry_run != true }}
+        if: ${{ inputs.dry_run != 'true' && inputs.test_alert != 'true' && inputs.run_poc != 'true' }}
         run: |
           git config user.name "price-monitor-bot"
           git config user.email "actions@users.noreply.github.com"
