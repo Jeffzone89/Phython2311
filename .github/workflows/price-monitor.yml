@@ -39,12 +39,12 @@ jobs:
       - run: pip install -r price-monitor/requirements.txt
 
       - name: Run PoC (Stage 1)
-        if: ${{ inputs.run_poc == 'true' }}
+        if: ${{ inputs.run_poc == true }}
         working-directory: price-monitor
         run: python3 poc/poc_inspect_response.py
 
       - name: Run monitor
-        if: ${{ inputs.run_poc != 'true' }}
+        if: ${{ inputs.run_poc != true }}
         working-directory: price-monitor
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -59,7 +59,7 @@ jobs:
           fi
 
       - name: Commit updated state
-        if: ${{ inputs.dry_run != 'true' && inputs.test_alert != 'true' && inputs.run_poc != 'true' }}
+        if: ${{ inputs.dry_run != true && inputs.test_alert != true && inputs.run_poc != true }}
         run: |
           git config user.name "price-monitor-bot"
           git config user.email "actions@users.noreply.github.com"

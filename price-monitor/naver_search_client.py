@@ -20,7 +20,15 @@ _HEADERS = {
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
         "(KHTML, like Gecko) Chrome/120.0 Safari/537.36"
     ),
-    "Accept-Language": "ko-KR,ko;q=0.9",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+    "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Referer": "https://www.naver.com/",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "same-site",
+    "Sec-Fetch-User": "?1",
+    "Upgrade-Insecure-Requests": "1",
 }
 
 _NEXT_DATA_RE = re.compile(
@@ -37,7 +45,16 @@ class SearchPageError(Exception):
 
 
 def search_shopping(query=KEYWORD, timeout=10):
-    resp = requests.get(SEARCH_URL, params={"query": query}, headers=_HEADERS, timeout=timeout)
+    session = requests.Session()
+    session.headers.update(_HEADERS)
+    # 홈페이지를 먼저 방문해 세션 쿠키를 확보한 뒤 검색을 요청 - 쿠키 없는
+    # 요청을 더 강하게 차단하는 봇 방지 로직을 우회하기 위한 시도.
+    try:
+        session.get("https://www.naver.com/", timeout=timeout)
+    except requests.RequestException:
+        pass
+
+    resp = session.get(SEARCH_URL, params={"query": query}, timeout=timeout)
     if resp.status_code != 200:
         raise SearchPageError(f"검색결과 페이지 요청 실패: {resp.status_code}")
 
@@ -116,8 +133,9 @@ def _normalize(item):
     if mall is None:
         mall = item.get("sellerName") or item.get("storeName")
 
+    raw_id = item.get("productId") or item.get("id") or item.get("nvMid") or item.get("itemId")
     return {
-        "productId": item.get("productId") or item.get("id") or item.get("nvMid") or item.get("itemId"),
+        "productId": str(raw_id) if raw_id is not None else None,
         "productType": item.get("productType"),
         "mallName": mall,
         "lprice": _to_int(item.get("lprice") or item.get("price") or item.get("salePrice") or item.get("minPrice")),
