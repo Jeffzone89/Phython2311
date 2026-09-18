@@ -2,34 +2,31 @@
 
 공식 오픈API(shop.json)가 막혀 있어(price-monitor/README.md의 Stage 0 기록 참고)
 검색결과 페이지(search.shopping.naver.com/search/all)를 직접 파싱하는 방식으로 전환했다.
-이 파일은 네트워크가 막힌 개발 환경에서 작성돼 실제 페이지 구조로 검증하지 못했다.
-Stage 1 PoC(poc/poc_catalog_page.py를 검색결과 URL로 실행)로 실제 __NEXT_DATA__ 구조를
-확인하고, 필요하면 _find_item_list()/_normalize()를 실측 결과에 맞게 고칠 것.
+
+순수 requests로는 헤더를 브라우저와 동일하게 맞춰도 HTTP 418(차단)이 떨어졌다
+(2026-09-18, GitHub Actions 실제 실행에서 확인). requests/urllib3의 TLS 핸드셰이크
+지문이 실제 브라우저와 달라 차단되는 것으로 보여, tools/render.py와 같은 Playwright
+(실제 Chromium 엔진)로 전환했다.
+
+이 파일은 네트워크가 막힌 개발 환경에서 작성돼 __NEXT_DATA__ 파싱 로직 자체는
+실제 페이지 구조로 검증하지 못했다. SearchPageError가 나면 poc_inspect_response.py가
+저장하는 raw_page_dump.html을 GitHub Actions 아티팩트로 내려받아 실제 구조를 확인하고
+_find_item_list()/_normalize()를 고칠 것.
 """
 import json
+import os
 import re
 
-import requests
+from playwright.sync_api import sync_playwright
 
 from config import KEYWORD
 
 SEARCH_URL = "https://search.shopping.naver.com/search/all"
 
-_HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-        "(KHTML, like Gecko) Chrome/120.0 Safari/537.36"
-    ),
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-    "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
-    "Accept-Encoding": "gzip, deflate, br",
-    "Referer": "https://www.naver.com/",
-    "Sec-Fetch-Dest": "document",
-    "Sec-Fetch-Mode": "navigate",
-    "Sec-Fetch-Site": "same-site",
-    "Sec-Fetch-User": "?1",
-    "Upgrade-Insecure-Requests": "1",
-}
+_USER_AGENT = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/120.0 Safari/537.36"
+)
 
 _NEXT_DATA_RE = re.compile(
     r'<script id="__NEXT_DATA__" type="application/json"[^>]*>(.*?)</script>', re.DOTALL
@@ -39,26 +36,37 @@ _NEXT_DATA_RE = re.compile(
 # 상품종류 = ((productType - 1) % 3) + 1  (1=가격비교 상품, 2=비매칭, 3=매칭)
 # 스크래핑한 데이터엔 이 필드가 없을 수 있어 None을 허용한다.
 
+# poc_inspect_response.py가 파싱 실패 시 원본 HTML을 저장해두는 경로.
+RAW_DUMP_PATH = os.path.join(os.path.dirname(__file__), "poc", "raw_page_dump.html")
+
 
 class SearchPageError(Exception):
     pass
 
 
-def search_shopping(query=KEYWORD, timeout=10):
-    session = requests.Session()
-    session.headers.update(_HEADERS)
-    # 홈페이지를 먼저 방문해 세션 쿠키를 확보한 뒤 검색을 요청 - 쿠키 없는
-    # 요청을 더 강하게 차단하는 봇 방지 로직을 우회하기 위한 시도.
-    try:
-        session.get("https://www.naver.com/", timeout=timeout)
-    except requests.RequestException:
-        pass
+def fetch_html(query=KEYWORD, timeout_ms=20000):
+    """Playwright(실제 Chromium)로 검색결과 페이지를 렌더링해 최종 HTML을 반환한다."""
+    url = f"{SEARCH_URL}?query={query}"
+    with sync_playwright() as pw:
+        browser = pw.chromium.launch()
+        try:
+            page = browser.new_page(user_agent=_USER_AGENT, locale="ko-KR")
+            resp = page.goto(url, timeout=timeout_ms, wait_until="networkidle")
+            if resp is None or resp.status != 200:
+                status = resp.status if resp else None
+                raise SearchPageError(f"검색결과 페이지 요청 실패: status={status}")
+            return page.content()
+        finally:
+            browser.close()
 
-    resp = session.get(SEARCH_URL, params={"query": query}, timeout=timeout)
-    if resp.status_code != 200:
-        raise SearchPageError(f"검색결과 페이지 요청 실패: {resp.status_code}")
 
-    match = _NEXT_DATA_RE.search(resp.text)
+def search_shopping(query=KEYWORD):
+    html = fetch_html(query=query)
+    return parse_html(html)
+
+
+def parse_html(html):
+    match = _NEXT_DATA_RE.search(html)
     if not match:
         raise SearchPageError(
             "__NEXT_DATA__ 임베디드 JSON을 찾지 못함 - 페이지가 이 가정과 다른 구조일 수 있음. "

@@ -5,7 +5,7 @@ import matcher
 import naver_search_client
 import state_store
 import telegram_notifier
-from config import KEYWORD
+from config import KEYWORD, MIN_VIABLE_PRICE
 
 
 def decide_alerts(group_key, prev, result, first_run):
@@ -26,10 +26,15 @@ def decide_alerts(group_key, prev, result, first_run):
     was_cheapest = prev.get("is_owner_cheapest")
     if was_cheapest and not result.is_owner_cheapest:
         diff = result.owner_price - result.cheapest_price
+        if result.cheapest_price >= MIN_VIABLE_PRICE:
+            guide = f"💰 마진 지키며 대응 가능 (최소 판매가 {MIN_VIABLE_PRICE:,}원 이상)"
+        else:
+            guide = f"⛔ 이 가격까지 따라가면 손해 (최소 판매가 {MIN_VIABLE_PRICE:,}원)"
         alerts.append(
             f"⚠️ [{KEYWORD}] 최저가 이탈 ({group_key})\n"
             f"현재 최저가: {result.cheapest_mall} {result.cheapest_price:,}원\n"
-            f"힐러문: {result.owner_price:,}원 ({diff:,}원 차이)"
+            f"힐러문: {result.owner_price:,}원 ({diff:,}원 차이)\n"
+            f"{guide}"
         )
     elif was_cheapest is False and result.is_owner_cheapest:
         alerts.append(f"✅ [{KEYWORD}] 최저가 회복 ({group_key})\n힐러문: {result.owner_price:,}원")

@@ -22,6 +22,12 @@ PRODUCT_VARIANTS = [
     },
 ]
 
+# 가격 조정 가이드용 원가 정보. 최저가 이탈 알림에 "최소 판매 가능가"를 같이 보여준다.
+OWNER_PRODUCT_COST = 27000  # 상품 원가
+OWNER_SHIPPING_COST = 2500  # 배송비(무료배송 정책이라 판매가에서 부담)
+MIN_MARGIN_WON = 100  # 최소 마진
+MIN_VIABLE_PRICE = OWNER_PRODUCT_COST + OWNER_SHIPPING_COST + MIN_MARGIN_WON
+
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
 
