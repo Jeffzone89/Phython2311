@@ -1,33 +1,30 @@
-"""일회성 테스트: r.jina.ai 같은 외부 리더 프록시를 통해 네이버쇼핑 검색결과를
-가져올 수 있는지 확인한다. GitHub Actions IP가 네이버에 직접 차단당해서(418),
-다른 네트워크 경로로 우회 가능한지 빠르게 검증하기 위한 일회성 스크립트다.
-"""
-import sys
+"""일회성 테스트 스크립트 (용도는 그때그때 바뀜).
 
+현재: apicenter.commerce.naver.com의 API 문서 페이지를 직접 조회해
+"카탈로그 조회" 등 커머스API가 판매처별 가격 정보를 주는지 확인한다.
+문서 페이지라 쇼핑 검색결과 페이지와 달리 차단 대상이 아닐 가능성이 높다.
+"""
 import requests
 
-TARGET = "https://search.shopping.naver.com/search/all?query=%EC%BD%9C%EB%A0%88%EC%8A%A4%ED%83%80"
+DOCS_URL = "https://apicenter.commerce.naver.com/docs/commerce-api/current/get-model-list-product"
 
-CANDIDATES = {
-    "jina_reader": f"https://r.jina.ai/{TARGET}",
+_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+        "(KHTML, like Gecko) Chrome/120.0 Safari/537.36"
+    ),
 }
 
 
 def main():
-    for name, url in CANDIDATES.items():
-        print(f"=== {name} ===")
-        try:
-            resp = requests.get(url, timeout=20)
-            print(f"status: {resp.status_code}, 길이: {len(resp.text)}자")
-            snippet = resp.text[:2000]
-            print(snippet)
-            has_cholesta = "콜레스타" in resp.text
-            print(f"\n'콜레스타' 텍스트 포함 여부: {has_cholesta}")
-        except Exception as exc:
-            print(f"실패: {exc}")
-        print()
+    print(f"=== {DOCS_URL} ===")
+    try:
+        resp = requests.get(DOCS_URL, headers=_HEADERS, timeout=20)
+        print(f"status: {resp.status_code}, 길이: {len(resp.text)}자\n")
+        print(resp.text)
+    except Exception as exc:
+        print(f"실패: {exc}")
 
 
 if __name__ == "__main__":
     main()
-    sys.exit(0)
